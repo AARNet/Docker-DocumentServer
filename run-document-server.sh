@@ -27,6 +27,7 @@ NGINX_ONLYOFFICE_INCLUDES_PATH="/etc/nginx/includes";
 NGINX_ONLYOFFICE_EXAMPLE_PATH=${NGINX_ONLYOFFICE_INCLUDES_PATH}/onlyoffice-documentserver-example.conf
 
 NGINX_CONFIG_PATH="/etc/nginx/nginx.conf"
+NGINX_PORT=${NGINX_PORT:80}
 NGINX_WORKER_PROCESSES=${NGINX_WORKER_PROCESSES:-1}
 NGINX_WORKER_CONNECTIONS=${NGINX_WORKER_CONNECTIONS:-$(ulimit -n)}
 
@@ -234,7 +235,7 @@ update_nginx_settings(){
   else
     cp ${NGINX_CONFD_PATH}/onlyoffice-documentserver.conf.template ${NGINX_ONLYOFFICE_PATH}
   fi
-
+  sed -i 's/listen \([^ ]*\):80/listen \1:'"${NGINX_PORT}"'/g' ${NGINX_ONLYOFFICE_PATH}
   if [ -f "${NGINX_ONLYOFFICE_EXAMPLE_PATH}" ]; then
     sed 's/linux/docker/' -i ${NGINX_ONLYOFFICE_EXAMPLE_PATH}
   fi
