@@ -1,11 +1,15 @@
 #!/bin/bash
 
+OO_DIR="/var/www/onlyoffice"
 APP_DIR="/var/www/onlyoffice/documentserver"
 DATA_DIR="/var/www/onlyoffice/Data"
 LOG_DIR="/var/log/onlyoffice"
 DS_LOG_DIR="${LOG_DIR}/documentserver"
 LIB_DIR="/var/lib/onlyoffice"
 CONF_DIR="/etc/onlyoffice/documentserver"
+
+ONLYOFFICE_UID=${ONLYOFFICE_UID:-105}
+ONLYOFFICE_GID=${ONLYOFFICE_GID:-109}
 
 ONLYOFFICE_DATA_CONTAINER=${ONLYOFFICE_DATA_CONTAINER:-false}
 ONLYOFFICE_DATA_CONTAINER_HOST=${ONLYOFFICE_DATA_CONTAINER_HOST:-localhost}
@@ -252,6 +256,11 @@ update_log_settings(){
    ${JSON_LOG} -I -e "this.levels.nodeJS = '${DS_LOG_LEVEL}'"
 }
 
+update_uid_gid(){
+  usermod -u ${ONLYOFFICE_UID} onlyoffice
+  groupmod -g ${ONLYOFFICE_GID} onlyoffice 
+}
+
 # create base folders
 for i in converter docservice spellchecker metrics gc; do
   mkdir -p "${DS_LOG_DIR}/$i"
@@ -259,8 +268,10 @@ done
 
 mkdir -p ${DS_LOG_DIR}-example
 
+update_uid_gid
+
 # change folder rights
-for i in ${LOG_DIR} ${LIB_DIR} ${DATA_DIR}; do
+for i in ${OO_DIR} ${LOG_DIR} ${LIB_DIR} ${DATA_DIR}; do
   chown -R onlyoffice:onlyoffice "$i"
   chmod -R 755 "$i"
 done
