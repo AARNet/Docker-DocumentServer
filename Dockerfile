@@ -4,10 +4,11 @@ LABEL maintainer Ascensio System SIA <support@onlyoffice.com>
 ENV LANG=en_US.UTF-8 LANGUAGE=en_US:en LC_ALL=en_US.UTF-8 DEBIAN_FRONTEND=noninteractive
 
 RUN echo "#!/bin/sh\nexit 0" > /usr/sbin/policy-rc.d && \
+    sed -i s/archive.ubuntu.com/au.archive.ubuntu.com/g /etc/apt/sources.list && \
     apt-get -y update && \
     apt-get --force-yes -yq install wget apt-transport-https curl && \
     apt-key adv --keyserver keyserver.ubuntu.com --recv-keys CB2DE8E5 && \
-    echo "deb http://archive.ubuntu.com/ubuntu precise main universe multiverse" >> /etc/apt/sources.list && \
+    echo "deb http://au.archive.ubuntu.com/ubuntu precise main universe multiverse" >> /etc/apt/sources.list && \
     locale-gen en_US.UTF-8 && \
     curl -sL https://deb.nodesource.com/setup_6.x | bash - && \
     apt-get -y update && \
